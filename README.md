@@ -120,54 +120,7 @@ Leave Combat    (green flash text)
 
 ## Changelog
 
-### v1.3.1
-- Fixed the settings window rendering blank — tab contents never drew due to a callback signature mismatch.
-- Unified the display settings between Loot Notification and Combat State: both now use Scroll Speed (multiplier of 100 px/s) and Fade Time (seconds); old loot `scrollTime` / `fadeSpeed` values are auto-converted per profile.
-- The enter/leave combat text boxes now show the effective localized default instead of appearing empty; clearing them restores the follow-client-locale behavior.
-- Fixed long combat state text (e.g. "Leave Combat") being truncated with an ellipsis.
-- Fixed a Lua error when looting caged battle pets and other non-item links.
-- Switching / copying / resetting profiles now applies anchors and lock state immediately.
-- Tuned defaults: loot font size 14, display time 1.5s, fade 0.1s, Y offset 250; combat display time 1s.
-- zhCN / zhTW leave-combat wording changed to "离开战斗" / "離開戰鬥".
-
-### v1.3.0
-- Rewrote settings UI on Ace3 (AceGUI/AceConfig/AceDB/LibSharedMedia). Standalone floating window with Loot / Combat State / Profiles tabs.
-- Added profile support (Profiles tab) so multiple characters can share or diverge on settings.
-- Added LibSharedMedia font list — any user-installed font from an LSM-aware addon is available in the font dropdown.
-- Fixed enter/leave combat default text sometimes freezing at whatever locale seeded the SavedVariables on first install. Defaults are now empty strings and the runtime falls back to the localized default text each call.
-- Existing LootGDB SavedVariables are auto-migrated into the new LootGAceDB shape on first launch.
-- Interface bumped to 12.0.5 / 12.0.7.
-- Rolled up the taint-error and dedup fixes shipped in 1.2.2 / 1.2.3.
-
-### v1.2.3
-- Bug fix
-
-### v1.2.2
-- Bug fix
-
-### v1.2.1
-- Added loot, currency, and gold notifications from opened containers, and restored missing chest and quest reward messages
-- Fixed duplicate or mixed notifications for personal currency, dungeon loot, and chest gold rewards
-- Fixed gold amount scaling, currency link fallback parsing, and duplicate gold icon display issues
-- Improved scrolling message updates with one shared animation loop, overlap avoidance, and smoother fading
-- Fixed profession skill notifications to use stable fileID icons and more reliable profession name matching
-
-### v1.2.0
-- Gold display now shows all sources (vendor, quest, loot, mail, etc.)
-- Added reputation change notifications with matching chat color
-- Added profession skill up notifications
-
-### v1.1.0
-- Added Combat State flash text module with Scroll/Static modes and 4-direction scrolling
-- Subcategory settings, independent anchors and font settings per module
-- Merged into single LootG.lua, continuous scrolling, localized UI labels
-
-### v1.0.0
-- Initial release
-- Scrolling loot display with animation
-- Item quality colors
-- Customizable fonts and positioning
-- Settings panel integration
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

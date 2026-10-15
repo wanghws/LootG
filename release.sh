@@ -31,8 +31,12 @@ mkdir -p "$DEST"
 
 # LootG has a flat repo layout — addon files sit at repo root alongside
 # CI/docs/tests we don't ship. We rsync from $ROOT/ with an explicit
-# exclude list, then re-include the addon icon.
+# exclude list. rsync applies the first matching rule, so the root-anchored
+# icon.png include must come before the '*.png' exclude that drops the README
+# screenshots (loot.png, income.png).
 rsync -a \
+    --include '/icon.png' \
+    --exclude '*.png' \
     --exclude '.git' \
     --exclude '.github' \
     --exclude '.gitignore' \
@@ -42,23 +46,14 @@ rsync -a \
     --exclude 'CLAUDE.md' \
     --exclude 'AGENTS.md' \
     --exclude 'README*.md' \
+    --exclude 'CHANGELOG.md' \
     --exclude 'release.sh' \
     --exclude 'scripts' \
     --exclude 'tests' \
     --exclude 'docs' \
     --exclude '*.zip' \
     --exclude '.DS_Store' \
-    --exclude '*.png' \
-    --include 'icon.png' \
     "$ROOT/" "$DEST/"
-
-# The --exclude '*.png' + --include 'icon.png' pair keeps the addon icon and
-# drops the README screenshots (loot.png, income.png).
-# We have to hand-copy icon.png back in because rsync applies the exclude
-# before the include in this ordering.
-if [ -f "$ROOT/icon.png" ]; then
-    cp "$ROOT/icon.png" "$DEST/icon.png"
-fi
 
 rm -f "$ROOT/$ZIP"
 ( cd "$STAGE" && zip -r -q "$ROOT/$ZIP" "$ADDON" )

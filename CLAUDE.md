@@ -64,3 +64,11 @@ Manual in-game testing:
 - Localization keys must be added to all three language blocks in Locales.lua (en default, zhCN, zhTW).
 - Release packaging: `bash release.sh` reads the version from `LootG.toc` and builds `LootG-v<version>.zip` with a top-level `LootG/` folder; release zips are gitignored and must not be committed.
 - Language: code comments and commit messages are in Chinese.
+
+## Release Workflow
+
+Releases are cut through the `/release` command (`.claude/commands/release.md`, mirrored for Codex at `.agents/skills/source-command-release/SKILL.md`; both are local and gitignored). It writes a bilingual entry to `CHANGELOG.md`, runs the specs, builds the zip, commits `发布 v<version>`, tags `v<version>`, then bumps the minor in `LootG.toc`. Do **not** push unless the user asks.
+
+The `## Version:` in `LootG.toc` is always the *next* unreleased version; the last released one is the latest `v*` tag. The changelog lives only in `CHANGELOG.md` — the READMEs link to it.
+
+Nothing uploads to CurseForge/WoWInterface — those are manual uploads of the generated zip.

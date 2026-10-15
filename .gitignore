@@ -3,11 +3,14 @@
 Thumbs.db
 
 # 编辑器 / IDE
-.claude/
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Agent 工具配置 (Claude Code、Codex 等,含本地 /release 命令)
+.claude/
+.agents/
 
 # 临时文件
 *.tmp
