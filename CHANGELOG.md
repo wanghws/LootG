@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0
+
+- Updated for patch 12.1.5: fixes the Lua error when looting currencies and items, caused by game functions Blizzard removed in this patch. Also fixes a possible error with very old saved settings and makes the scrolling animation lighter during heavy looting.
+- 适配 12.1.5 版本：修复拾取通货和物品时，因暴雪在本次更新中移除旧函数而出现的 Lua 报错。同时修复部分很旧的存档可能引发的报错，并降低大量拾取时滚动动画的性能开销。
+
 ## v1.3.1
 
 - Fixed the settings window rendering blank — tab contents never drew due to a callback signature mismatch.
