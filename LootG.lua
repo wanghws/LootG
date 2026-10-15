@@ -331,8 +331,6 @@ end
 
 -- Helper to display a looted item or currency
 local function ShowItemLoot(link, quantity, texture, quality, isCurrency)
-    local nameColor = nil
-
     if isCurrency then
         if not texture or not quality then
             local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
@@ -343,31 +341,25 @@ local function ShowItemLoot(link, quantity, texture, quality, isCurrency)
         end
     else
         if not texture or not quality then
-            local _, _, q, _, _, _, _, _, _, t = GetItemInfo(link)
+            local _, _, q, _, _, _, _, _, _, t = C_Item.GetItemInfo(link)
             texture = texture or t
             quality = quality or q
         end
     end
 
-    if quality then
-        local r, g, b, hex = GetItemQualityColor(quality)
-        nameColor = "|c" .. hex
-    end
+    local function ShowMessage(iconToUse, itemQuality)
+        local displayLink = link:gsub("(|h)%[(.-)%](|h)", "%1%2%3")
 
-    local function ShowMessage(iconToUse, colorCode)
-        local displayLink = link
-        displayLink = displayLink:gsub("(|h)%[(.-)%](|h)", "%1%2%3")
-
-        if colorCode then
-            if not displayLink:find("^|c") then
-                displayLink = colorCode .. displayLink .. "|r"
-            end
+        -- 游戏生成的链接自带颜色（|cff... 或 |cnIQ...），只给无色链接补品质色；
+        -- ColorManager 生成 |cnIQ 颜色标记，会遵循玩家自定义的品质颜色
+        if itemQuality and not displayLink:find("^|c") then
+            displayLink = ColorManager.GetFormattedStringForItemQuality(displayLink, itemQuality)
         end
 
         local displayText = L["Loot"] .. " " .. displayLink .. " x" .. quantity
 
         if not isCurrency then
-            local bagCount = GetItemCount(link)
+            local bagCount = C_Item.GetItemCount(link)
             if bagCount and bagCount > 0 then
                 displayText = displayText .. " (" .. bagCount .. ")"
             end
@@ -382,22 +374,17 @@ local function ShowItemLoot(link, quantity, texture, quality, isCurrency)
     end
 
     if texture then
-        ShowMessage(texture, nameColor)
+        ShowMessage(texture, quality)
     elseif not isCurrency and link:find("|Hitem:", 1, true) then
         -- 物品信息未缓存时异步加载；Item:CreateFromItemLink 只接受
         -- item 链接，battlepet/keystone 等其他链接类型会直接报错
         local item = Item:CreateFromItemLink(link)
         item:ContinueOnItemLoad(function()
-            local _, _, q, _, _, _, _, _, _, loadedTexture = GetItemInfo(link)
-            local color = nil
-            if q then
-                local r, g, b, hex = GetItemQualityColor(q)
-                color = "|c" .. hex
-            end
-            ShowMessage(loadedTexture, color)
+            local _, _, q, _, _, _, _, _, _, loadedTexture = C_Item.GetItemInfo(link)
+            ShowMessage(loadedTexture, q)
         end)
     else
-        ShowMessage(nil, nameColor)
+        ShowMessage(nil, quality)
     end
 end
 
@@ -726,18 +713,14 @@ f:SetScript("OnEvent", function(self, event, ...)
             if isLooting and lootMoneyCopper > 0 then
                 gained = lootMoneyCopper
                 lootMoneyCopper = 0
-                local moneyText = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString
-                    and C_CurrencyInfo.GetCoinTextureString(gained)
-                    or GetCoinTextureString(gained)
+                local moneyText = C_CurrencyInfo.GetCoinTextureString(gained)
                 CreateScrollingMessage(moneyText, nil)
                 lastMoneyShownTime = GetTime()
             else
                 -- 非拾取场景（邮件、拍卖行等）：延迟显示，优先让 CHAT_MSG_MONEY 提供精确金额
                 -- 如果已有待显示的金额（连续出售等），先立即显示上一条，避免丢失
                 if pendingMoneyGain then
-                    local prevText = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString
-                        and C_CurrencyInfo.GetCoinTextureString(pendingMoneyGain)
-                        or GetCoinTextureString(pendingMoneyGain)
+                    local prevText = C_CurrencyInfo.GetCoinTextureString(pendingMoneyGain)
                     CreateScrollingMessage(prevText, nil)
                     lastMoneyShownTime = GetTime()
                 end
@@ -747,9 +730,7 @@ f:SetScript("OnEvent", function(self, event, ...)
                     -- 定时器触发前用户可能已关闭插件，重新检查开关
                     local cfgNow = LootCfg()
                     if pendingMoneyGain and cfgNow and cfgNow.enabled then
-                        local moneyText = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString
-                            and C_CurrencyInfo.GetCoinTextureString(pendingMoneyGain)
-                            or GetCoinTextureString(pendingMoneyGain)
+                        local moneyText = C_CurrencyInfo.GetCoinTextureString(pendingMoneyGain)
                         CreateScrollingMessage(moneyText, nil)
                         lastMoneyShownTime = GetTime()
                     end
@@ -783,7 +764,7 @@ f:SetScript("OnEvent", function(self, event, ...)
         -- 去重：跳过已由 LOOT_SLOT_CLEARED 或 SHOW_LOOT_TOAST 显示的物品
         local wasShownRecently = WasShownRecently(link, "CHAT_MSG_LOOT")
         if wasShownRecently then return end
-        local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
+        local _, _, quality, _, _, _, _, _, _, texture = C_Item.GetItemInfo(link)
         ShowItemLoot(link, quantity, texture, quality, false)
         RememberShown(link, "CHAT_MSG_LOOT")
     elseif event == "CHAT_MSG_CURRENCY" then
@@ -845,7 +826,7 @@ f:SetScript("OnEvent", function(self, event, ...)
                 quality = currencyInfo.quality
             end
         else
-            local _, _, q, _, _, _, _, _, _, t = GetItemInfo(link)
+            local _, _, q, _, _, _, _, _, _, t = C_Item.GetItemInfo(link)
             texture = t
             quality = q
         end
@@ -918,12 +899,7 @@ function LootG:RegisterBlizzardStub()
     title:SetPoint("TOPLEFT", 16, -16)
     title:SetText(L["LootG"] or "LootG")
 
-    local version = ""
-    if C_AddOns and C_AddOns.GetAddOnMetadata then
-        version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-    elseif GetAddOnMetadata then
-        version = GetAddOnMetadata(addonName, "Version") or ""
-    end
+    local version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
 
     local ver = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     ver:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
@@ -938,18 +914,14 @@ function LootG:RegisterBlizzardStub()
     btn:SetSize(200, 24)
     btn:SetText(L["BLIZZARD_STUB_BUTTON"] or "Open LootG Options")
     btn:SetScript("OnClick", function()
-        HideUIPanel(SettingsPanel or InterfaceOptionsFrame)
+        HideUIPanel(SettingsPanel)
         HideUIPanel(GameMenuFrame)
         LootG:OpenOptions()
     end)
 
-    if _G.Settings and _G.Settings.RegisterCanvasLayoutCategory then
-        local category = Settings.RegisterCanvasLayoutCategory(panel, L["LootG"] or "LootG")
-        Settings.RegisterAddOnCategory(category)
-        LootG.SettingsCategory = category
-    elseif _G.InterfaceOptions_AddCategory then
-        InterfaceOptions_AddCategory(panel)
-    end
+    local category = Settings.RegisterCanvasLayoutCategory(panel, L["LootG"] or "LootG")
+    Settings.RegisterAddOnCategory(category)
+    LootG.SettingsCategory = category
 end
 
 -- ======= Slash Command =======
@@ -962,10 +934,7 @@ SlashCmdList["LOOTG"] = function(msg)
         print("|cff00ff00[LootG Debug]|r ERR_SKILL_UP_SI = " .. tostring(ERR_SKILL_UP_SI))
         local money = GetMoney()
         print("|cff00ff00[LootG Debug]|r GetMoney() = " .. tostring(money) .. " copper")
-        print("|cff00ff00[LootG Debug]|r GetCoinTextureString(10000) = " .. tostring(GetCoinTextureString(10000)))
-        if C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString then
-            print("|cff00ff00[LootG Debug]|r C_CurrencyInfo(10000) = " .. tostring(C_CurrencyInfo.GetCoinTextureString(10000)))
-        end
+        print("|cff00ff00[LootG Debug]|r C_CurrencyInfo.GetCoinTextureString(10000) = " .. tostring(C_CurrencyInfo.GetCoinTextureString(10000)))
         return
     elseif msg == "test" then
         local testItem = "|cff0070dd|Hitem:124112::::::::110:::::|h[Test Item]|h|r"

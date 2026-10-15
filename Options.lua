@@ -292,12 +292,7 @@ function LootG:OpenOptions()
         return
     end
 
-    local version = ""
-    if C_AddOns and C_AddOns.GetAddOnMetadata then
-        version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-    elseif GetAddOnMetadata then
-        version = GetAddOnMetadata(addonName, "Version") or ""
-    end
+    local version = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
 
     local f = AceGUI:Create("Frame")
     f:SetTitle(L["LootG"] or "LootG")

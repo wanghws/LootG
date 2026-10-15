@@ -42,7 +42,6 @@ rsync -a \
     --exclude '.gitignore' \
     --exclude '.claude' \
     --exclude '.agents' \
-    --exclude '.superpowers' \
     --exclude 'CLAUDE.md' \
     --exclude 'AGENTS.md' \
     --exclude 'README*.md' \
