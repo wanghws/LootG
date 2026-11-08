@@ -27,6 +27,7 @@ Manual in-game testing:
 - All icon references use numeric **fileID** values (e.g., `236681` for Achievement_Reputation_01), not string texture paths.
 - `C_CurrencyInfo.GetCoinTextureString()` returns text with inline coin icons — do not add a separate icon parameter when displaying money.
 - Patch 12.1.5 removed the deprecated global fallbacks (`GetItemInfo`, `GetItemCount`, `GetItemQualityColor`, `GetCoinTextureString`, `tContains`, `Round`, …). Always call the namespaced API (`C_Item.*`, `C_CurrencyInfo.*`, `C_AddOns.*`, `Settings.*`) directly — no `or LegacyGlobal` fallbacks.
+- The single `LootG.toc` targets both Retail and WoW Forever (`## Interface: 120105, 16001`). Forever runs on the Mainline UI/API of 12.1.5 and reports `WOW_PROJECT_ID == WOW_PROJECT_MAINLINE`, so there is no per-flavor code path — bump both numbers on each patch.
 - Color text by item quality with `ColorManager.GetFormattedStringForItemQuality(text, quality)` (emits a `|cnIQ<n>:` token that honors the player's quality color overrides). Game-generated links already carry `|cff…` or `|cnIQ…` colors — don't re-wrap them.
 - The addon uses WoW's frame pooling pattern to avoid GC pressure during rapid loot events.
 - Localization keys must be added to all three language blocks in Locales.lua (en default, zhCN, zhTW).

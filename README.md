@@ -37,7 +37,7 @@
 ## Installation
 
 1. Download and extract the `LootG` folder
-2. Place it in your `World of Warcraft\_retail_\Interface\AddOns\` directory
+2. Place it in the `Interface\AddOns\` directory of your Retail (`_retail_`) or WoW Forever client
 3. Restart WoW or reload your UI (`/reload`)
 
 ## Usage

@@ -37,7 +37,7 @@
 ## 安装方法
 
 1. 下载并解压 `LootG` 文件夹
-2. 将其放入 `World of Warcraft\_retail_\Interface\AddOns\` 目录
+2. 将其放入正式服（`_retail_`）或 WoW Forever 客户端的 `Interface\AddOns\` 目录
 3. 重启魔兽世界或重载界面（`/reload`）
 
 ## 使用方法
