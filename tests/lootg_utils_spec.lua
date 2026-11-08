@@ -101,4 +101,14 @@ do
     assert_truthy(shown["2815"], "窗口内的条目不应被清理")
 end
 
+do
+    local prev = { level = 10, xp = 4800, maxXP = 5000 }
+    assert_equal(util.ComputeXPGain(prev, 10, 4950), 150, "同级获得经验应为差值")
+    assert_equal(util.ComputeXPGain(prev, 11, 150), 350, "升级时应累加上一级剩余经验与新等级当前经验")
+    assert_equal(util.ComputeXPGain(prev, 10, 4800), 0, "经验未变化应为 0")
+    assert_equal(util.ComputeXPGain(prev, 10, 150), 0, "未升级的经验下降不应算作获得")
+    assert_equal(util.ComputeXPGain(prev, 9, 150), 0, "等级下降不应算作获得")
+    assert_equal(util.ComputeXPGain(nil, 10, 1000), 0, "缺少基准快照时应为 0")
+end
+
 print("lootg_utils_spec: ok")

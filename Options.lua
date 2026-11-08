@@ -142,6 +142,7 @@ local function DrawLootTab(container)
     AddCheckbox(container, L["OPT_ENABLED"],   function() return cfg.enabled  end, function(v) cfg.enabled  = v end)
     AddCheckbox(container, L["OPT_LOCKED"],    function() return cfg.locked   end, function(v) cfg.locked   = v end)
     AddCheckbox(container, L["OPT_SHOW_ICON"], function() return cfg.showIcon end, function(v) cfg.showIcon = v end)
+    AddCheckbox(container, L["OPT_SHOW_XP"],   function() return cfg.showXP   end, function(v) cfg.showXP   = v end)
 
     AddSeparator(container, L["SECTION_FONT"])
     AddLSMFontDropdown(container, L["OPT_FONT"],

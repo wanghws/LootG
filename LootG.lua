@@ -31,6 +31,8 @@ f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:RegisterEvent("MAIL_SHOW")
 f:RegisterEvent("MERCHANT_SHOW")
 f:RegisterEvent("AUCTION_HOUSE_SHOW")
+f:RegisterEvent("PLAYER_XP_UPDATE")
+f:RegisterEvent("PLAYER_LEVEL_UP")
 
 local activeMessages = {}
 local messagePool = {}
@@ -42,6 +44,8 @@ local recentlyShown = {} -- 去重：记录已由 LOOT_SLOT_CLEARED 显示的物
 local lastMoneyShownTime = 0 -- 去重：PLAYER_MONEY 与 CHAT_MSG_MONEY 之间
 local pendingMoneyGain = nil -- 延迟显示的 PLAYER_MONEY 金额（铜币），等待 CHAT_MSG_MONEY 覆盖
 local pendingMoneyTimer = nil -- 延迟显示的定时器
+local xpSnapshot = {}
+local levelUpLevel = nil
 local RECENTLY_SHOWN_WINDOW = 5
 local Util = LootG.Util
 
@@ -388,6 +392,30 @@ local function ShowItemLoot(link, quantity, texture, quality, isCurrency)
     end
 end
 
+local function ChatColorCode(chatType, fallback)
+    local info = ChatTypeInfo[chatType]
+    if not info then return fallback end
+    return format("|cff%02x%02x%02x", info.r * 255, info.g * 255, info.b * 255)
+end
+
+local function SnapshotXP(level)
+    xpSnapshot.level = level
+    xpSnapshot.xp = UnitXP("player")
+    xpSnapshot.maxXP = UnitXPMax("player")
+end
+
+local function ShowXPGain(amount)
+    CreateScrollingMessage(ChatColorCode("COMBAT_XP_GAIN", "|cff6f6fff") .. L["XP"] .. " +" .. BreakUpLargeNumbers(amount) .. "|r", nil)
+end
+
+local function ShowTestMessages()
+    local testItem = "|cff0070dd|Hitem:124112::::::::110:::::|h[Test Item]|h|r"
+    testItem = testItem:gsub("(|h)%[(.-)%](|h)", "%1%2%3")
+    CreateScrollingMessage(testItem, 134400)
+    local cfg = LootCfg()
+    if cfg and cfg.showXP then ShowXPGain(1234) end
+end
+
 -- ======= Combat State =======
 
 --------------------------------------------------
@@ -700,6 +728,21 @@ f:SetScript("OnEvent", function(self, event, ...)
         or event == "MERCHANT_SHOW" or event == "AUCTION_HOUSE_SHOW" then
         -- 同步 previousMoney，避免金币偏差混入后续差值计算
         previousMoney = GetMoney()
+        if event == "PLAYER_ENTERING_WORLD" then
+            levelUpLevel = nil
+            SnapshotXP(UnitLevel("player"))
+        end
+    elseif event == "PLAYER_LEVEL_UP" then
+        levelUpLevel = ...
+    elseif event == "PLAYER_XP_UPDATE" then
+        local unit = ...
+        if unit ~= "player" then return end
+        local currentLevel = math.max(UnitLevel("player"), levelUpLevel or 0)
+        levelUpLevel = nil
+        local gained = Util.ComputeXPGain(xpSnapshot, currentLevel, UnitXP("player"))
+        SnapshotXP(currentLevel)
+        local cfg = LootCfg()
+        if gained > 0 and cfg and cfg.enabled and cfg.showXP then ShowXPGain(gained) end
     elseif event == "PLAYER_MONEY" then
         local cfg = LootCfg()
         if not cfg or not cfg.enabled then
@@ -839,9 +882,7 @@ f:SetScript("OnEvent", function(self, event, ...)
         if not rawMsg then return end
         local message = DetaintString(rawMsg)
         if not message then return end
-        local info = ChatTypeInfo["COMBAT_FACTION_CHANGE"]
-        local colorCode = info and format("|cff%02x%02x%02x", info.r * 255, info.g * 255, info.b * 255) or "|cff00ffa0"
-        CreateScrollingMessage(colorCode .. message .. "|r", 236681) -- Achievement_Reputation_01 fileID
+        CreateScrollingMessage(ChatColorCode("COMBAT_FACTION_CHANGE", "|cff00ffa0") .. message .. "|r", 236681) -- Achievement_Reputation_01 fileID
     elseif event == "CHAT_MSG_SKILL" then
         local cfg = LootCfg()
         if not cfg or not cfg.enabled then return end
@@ -849,8 +890,7 @@ f:SetScript("OnEvent", function(self, event, ...)
         if not rawMsg then return end
         local message = DetaintString(rawMsg)
         if not message then return end
-        local info = ChatTypeInfo["SKILL"]
-        local colorCode = info and format("|cff%02x%02x%02x", info.r * 255, info.g * 255, info.b * 255) or "|cff5555ff"
+        local colorCode = ChatColorCode("SKILL", "|cff5555ff")
         local skillName, skillLevel
         if PATTERN_SKILL_UP then
             skillName, skillLevel = string.match(message, PATTERN_SKILL_UP)
@@ -937,10 +977,7 @@ SlashCmdList["LOOTG"] = function(msg)
         print("|cff00ff00[LootG Debug]|r C_CurrencyInfo.GetCoinTextureString(10000) = " .. tostring(C_CurrencyInfo.GetCoinTextureString(10000)))
         return
     elseif msg == "test" then
-        local testItem = "|cff0070dd|Hitem:124112::::::::110:::::|h[Test Item]|h|r"
-        testItem = testItem:gsub("(|h)%[(.-)%](|h)", "%1%2%3")
-        local testIcon = 134400 -- A generic icon
-        CreateScrollingMessage(testItem, testIcon)
+        ShowTestMessages()
     else
         LootG:OpenOptions()
     end
@@ -949,10 +986,7 @@ end
 -- Addon Compartment Click Handler
 function LootG_OnCompartmentClick(addonName, button)
     if button == "RightButton" then
-        local testItem = "|cff0070dd|Hitem:124112::::::::110:::::|h[Test Item]|h|r"
-        testItem = testItem:gsub("(|h)%[(.-)%](|h)", "%1%2%3")
-        local testIcon = 134400
-        CreateScrollingMessage(testItem, testIcon)
+        ShowTestMessages()
     else
         LootG:OpenOptions()
     end

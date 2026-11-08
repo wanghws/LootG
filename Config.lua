@@ -16,6 +16,7 @@ LootG.Defaults = {
             enabled         = true,
             locked          = true,
             showIcon        = true,
+            showXP          = true,
             anchorX         = 0,
             anchorY         = 250,
             scrollDirection = "UP",

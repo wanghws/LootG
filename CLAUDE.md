@@ -17,7 +17,7 @@ Standalone Lua specs (no WoW client needed), run from the repo root:
 - `lua tests/lootg_migration_spec.lua` — `LootG:_MigrateLegacyDB` SavedVariables migration
 
 Manual in-game testing:
-- `/lootg test` — display a test loot notification
+- `/lootg test` — display a test loot notification (plus a test XP line when "Show Experience Gains" is on)
 - `/lootg debug` — print debug state
 - Right-click the addon compartment button for test display
 

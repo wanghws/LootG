@@ -20,6 +20,7 @@
 - **Duplicate Protection** - Deduplicates repeated notifications for dungeon drops, personal currency, and chest rewards
 - **Reputation Change Notification** - Displays reputation gains and losses using the matching chat color
 - **Skill Up Notification** - Displays profession skill level increases
+- **Experience Gain Notification** - Displays experience gained from kills, quests and exploration (toggleable)
 - **Customizable Position** - Drag the blue anchor to position the display anywhere on screen
 - **Clean Interface** - Only shows YOUR loot, not party/raid members
 

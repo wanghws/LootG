@@ -77,3 +77,17 @@ function Util.ParseCurrencyChatMessage(message, patterns)
 
     return link, tonumber(quantity) or 1
 end
+
+function Util.ComputeXPGain(prev, curLevel, curXP)
+    if type(prev) ~= "table" or type(prev.level) ~= "number" or type(prev.xp) ~= "number"
+        or type(curLevel) ~= "number" or type(curXP) ~= "number" then
+        return 0
+    end
+    if curLevel == prev.level then
+        return math.max(0, curXP - prev.xp)
+    end
+    if curLevel > prev.level then
+        return math.max(0, (prev.maxXP or 0) - prev.xp) + curXP
+    end
+    return 0
+end

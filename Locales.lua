@@ -6,6 +6,7 @@ local Locales = {
     ["ENTER_COMBAT"] = "Enter Combat",
     ["LEAVE_COMBAT"] = "Leave Combat",
     ["Loot"]         = "Loot",
+    ["XP"]           = "Experience",
     ["LootG"]        = "LootG",
     ["Combat State"] = "Combat State",
 
@@ -32,6 +33,7 @@ local Locales = {
     ["OPT_ENABLED"]           = "Enabled",
     ["OPT_LOCKED"]            = "Lock Position",
     ["OPT_SHOW_ICON"]         = "Show Icon",
+    ["OPT_SHOW_XP"]           = "Show Experience Gains",
     ["OPT_FONT"]              = "Font",
     ["OPT_FONT_SIZE"]         = "Font Size",
     ["OPT_FONT_OUTLINE"]      = "Font Outline",
@@ -70,6 +72,7 @@ if gameLocale == "zhCN" then
     Locales["ENTER_COMBAT"] = "进入战斗"
     Locales["LEAVE_COMBAT"] = "离开战斗"
     Locales["Loot"]         = "拾取"
+    Locales["XP"]           = "经验值"
     Locales["Combat State"] = "战斗状态"
 
     Locales["Fonts\\FRIZQT__.TTF"] = "标准 (Friz Quadrata)"
@@ -90,6 +93,7 @@ if gameLocale == "zhCN" then
     Locales["OPT_ENABLED"]           = "启用"
     Locales["OPT_LOCKED"]            = "锁定位置"
     Locales["OPT_SHOW_ICON"]         = "显示图标"
+    Locales["OPT_SHOW_XP"]           = "显示经验值获取"
     Locales["OPT_FONT"]              = "字体"
     Locales["OPT_FONT_SIZE"]         = "字号"
     Locales["OPT_FONT_OUTLINE"]      = "字体描边"
@@ -123,6 +127,7 @@ elseif gameLocale == "zhTW" then
     Locales["ENTER_COMBAT"] = "進入戰鬥"
     Locales["LEAVE_COMBAT"] = "離開戰鬥"
     Locales["Loot"]         = "拾取"
+    Locales["XP"]           = "經驗值"
     Locales["Combat State"] = "戰鬥狀態"
 
     Locales["Fonts\\FRIZQT__.TTF"] = "標準 (Friz Quadrata)"
@@ -143,6 +148,7 @@ elseif gameLocale == "zhTW" then
     Locales["OPT_ENABLED"]           = "啟用"
     Locales["OPT_LOCKED"]            = "鎖定位置"
     Locales["OPT_SHOW_ICON"]         = "顯示圖示"
+    Locales["OPT_SHOW_XP"]           = "顯示經驗值獲取"
     Locales["OPT_FONT"]              = "字體"
     Locales["OPT_FONT_SIZE"]         = "字號"
     Locales["OPT_FONT_OUTLINE"]      = "字體描邊"
