@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.0
+
+- Experience gains from kills, quests and exploration now scroll alongside your loot, with its own "Show Experience Gains" toggle in the options. `/lootg test` also previews an XP line when the toggle is on.
+- 新增经验值获取提示：击杀、任务、探索等获得的经验会随拾取信息一起滚动显示，可在设置中通过"显示经验值获取"单独开关。开启时 `/lootg test` 也会显示一条测试经验。
+
 ## v1.5.0
 
 - Now supports WoW Forever: the same package loads in both the Retail and WoW Forever clients without being flagged as out of date.
