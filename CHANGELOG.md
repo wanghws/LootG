@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.0
+
+- Now supports WoW Forever: the same package loads in both the Retail and WoW Forever clients without being flagged as out of date.
+- 新增 WoW Forever 支持：同一个插件包可同时在正式服和 WoW Forever 客户端中加载，不会被标记为"已过期"。
+
 ## v1.4.0
 
 - Updated for patch 12.1.5: fixes the Lua error when looting currencies and items, caused by game functions Blizzard removed in this patch. Also fixes a possible error with very old saved settings and makes the scrolling animation lighter during heavy looting.
